@@ -16,10 +16,12 @@
             "intelliSenseMode": "gcc-x64",
             "includePath": [
                 "C:\\Users\\Paul\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.4\\cores\\arduino",
-                "C:\\Users\\Paul\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.4\\variants\\eightanaloginputs",
+                "C:\\Users\\Paul\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.4\\variants\\standard",
+                "C:\\Users\\Paul\\Documents\\Arduino\\libraries\\LiquidCrystal\\src",
                 "c:\\users\\paul\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include",
                 "c:\\users\\paul\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include-fixed",
-                "c:\\users\\paul\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include"
+                "c:\\users\\paul\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include",
+                "${workspaceFolder}\\arduino"
             ],
             "forcedInclude": [
                 "C:\\Users\\Paul\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.4\\cores\\arduino\\Arduino.h"
@@ -29,7 +31,7 @@
             "defines": [
                 "F_CPU=16000000L",
                 "ARDUINO=10819",
-                "ARDUINO_AVR_NANO",
+                "ARDUINO_AVR_UNO",
                 "ARDUINO_ARCH_AVR",
                 "__DBL_MIN_EXP__=(-125)",
                 "__HQ_FBIT__=15",

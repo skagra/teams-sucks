@@ -1,6 +1,6 @@
 {
     "sketch": "arduino\\teams_sucks.ino",
-    "board": "arduino:avr:nano",
-    "configuration": "cpu=atmega328",
-    "output": "arduino\\build"
+    "board": "arduino:avr:uno",
+    "output": "arduino\\build",
+    "port": "COM3"
 }

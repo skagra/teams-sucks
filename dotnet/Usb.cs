@@ -1,112 +1,112 @@
-﻿using System;
-using System.IO.Ports;
-using System.Threading;
+﻿// using System;
+// using System.IO.Ports;
+// using System.Threading;
 
 
-class Programxx
-{
-    static void Mainxx(string[] Arguments)
-    {
-        PinReader Reader = new PinReader();
+// class Programxx
+// {
+//     static void Mainxx(string[] Arguments)
+//     {
+//         PinReader Reader = new PinReader();
         
-        Reader.Start("COM3", 9600, 8, Parity.None, StopBits.One);
+//         Reader.Start("COM3", 9600, 8, Parity.None, StopBits.One);
 
-        while (true)
-        {
-            PinReader.PinEvent CurrentEvent = Reader.Tick();
+//         while (true)
+//         {
+//             PinReader.PinEvent CurrentEvent = Reader.Tick();
 
-            if (CurrentEvent != null)
-            {
-                Console.WriteLine($"Pin number: { CurrentEvent.PinNumber } -- IsActivatedEvent: { CurrentEvent.IsActivatedEvent }");
-            }
+//             if (CurrentEvent != null)
+//             {
+//                 Console.WriteLine($"Pin number: { CurrentEvent.PinNumber } -- IsActivatedEvent: { CurrentEvent.IsActivatedEvent }");
+//             }
 
-            Thread.Sleep(1);
-        }
-    }
-}
+//             Thread.Sleep(1);
+//         }
+//     }
+// }
 
-public class PinReader
-{
-    public class PinEvent
-    {
-        public int PinNumber;
+// public class PinReader
+// {
+//     public class PinEvent
+//     {
+//         public int PinNumber;
 
-        public bool IsActivatedEvent;
+//         public bool IsActivatedEvent;
 
-        public PinEvent(int PinNumber, bool IsActivatedEvent)
-        {
-            this.PinNumber = PinNumber;
+//         public PinEvent(int PinNumber, bool IsActivatedEvent)
+//         {
+//             this.PinNumber = PinNumber;
 
-            this.IsActivatedEvent = IsActivatedEvent;
-        }
-    }
+//             this.IsActivatedEvent = IsActivatedEvent;
+//         }
+//     }
 
-    const byte SentinelByte = 255;
+//     const byte SentinelByte = 255;
 
-    bool SentinelByteSeen, PinNumberByteSeen;
+//     bool SentinelByteSeen, PinNumberByteSeen;
 
-    int CurrentPinNumber;
+//     int CurrentPinNumber;
 
-    SerialPort InputPort;
+//     SerialPort InputPort;
 
-    public void Start(string PortName, int BaudRate, int DataBitCount, Parity ParitySetting, StopBits StopBitSetting)
-    {
-        InputPort = new SerialPort(PortName, BaudRate, ParitySetting, DataBitCount, StopBitSetting);
+//     public void Start(string PortName, int BaudRate, int DataBitCount, Parity ParitySetting, StopBits StopBitSetting)
+//     {
+//         InputPort = new SerialPort(PortName, BaudRate, ParitySetting, DataBitCount, StopBitSetting);
 
-        InputPort.ReadBufferSize = 1024 * 1024 * 4;
+//         InputPort.ReadBufferSize = 1024 * 1024 * 4;
 
-        InputPort.Open();
-    }
+//         InputPort.Open();
+//     }
 
-    public void Stop()
-    {
-        InputPort.Dispose();
+//     public void Stop()
+//     {
+//         InputPort.Dispose();
 
-        InputPort = null;
-    }
+//         InputPort = null;
+//     }
 
-    public PinEvent Tick()
-    {
-        while (InputPort.BytesToRead > 0)
-        {
-            int CurrentByte = InputPort.ReadByte();
+//     public PinEvent Tick()
+//     {
+//         while (InputPort.BytesToRead > 0)
+//         {
+//             int CurrentByte = InputPort.ReadByte();
 
-            if (CurrentByte == SentinelByte)
-            {
-                SentinelByteSeen = true;
+//             if (CurrentByte == SentinelByte)
+//             {
+//                 SentinelByteSeen = true;
 
-                PinNumberByteSeen = false;
+//                 PinNumberByteSeen = false;
 
-                continue;
-            }
+//                 continue;
+//             }
 
-            if (SentinelByteSeen)
-            {
-                if (PinNumberByteSeen)
-                {
-                    SentinelByteSeen = false;
+//             if (SentinelByteSeen)
+//             {
+//                 if (PinNumberByteSeen)
+//                 {
+//                     SentinelByteSeen = false;
 
-                    bool IsActivatedEvent = (CurrentByte == 0) ? (false) : (true);
+//                     bool IsActivatedEvent = (CurrentByte == 0) ? (false) : (true);
 
-                    return (new PinEvent(CurrentPinNumber, IsActivatedEvent));
-                }
+//                     return (new PinEvent(CurrentPinNumber, IsActivatedEvent));
+//                 }
 
-                PinNumberByteSeen = true;
+//                 PinNumberByteSeen = true;
 
-                CurrentPinNumber = CurrentByte;
-            }
-        }
+//                 CurrentPinNumber = CurrentByte;
+//             }
+//         }
 
-        return (null);
-    }
+//         return (null);
+//     }
 
-    public void Reset()
-    {
-        while (InputPort.BytesToRead > 0)
-        {
-            InputPort.ReadByte();
-        }
+//     public void Reset()
+//     {
+//         while (InputPort.BytesToRead > 0)
+//         {
+//             InputPort.ReadByte();
+//         }
 
-        SentinelByteSeen = false;
-    }
-}
+//         SentinelByteSeen = false;
+//     }
+// }

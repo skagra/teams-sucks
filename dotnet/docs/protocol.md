@@ -13,8 +13,8 @@ Function    | Length | OpCode | Payload | Checksum |
 
 ## Payload Types
 
-* `String` - Ascii characters.  No length or terminator as lenght is implied by packet length
-* `Time` - Seconds since the Unix epoch (1st Jan 1970)
+* `String` - Ascii characters.  No length or terminator as length. is implied by packet length
+* `Time` - Seconds since the Unix epoch (1st Jan 1970).  32 bit unsigned little-endian integer.
 * `Byte` 
 
 ## Operations

@@ -82,7 +82,7 @@ namespace TeamsSucks
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-        static void Main(string[] args)
+        static void MainX(string[] args)
         {
 
             SearchForWindow("IEFrame", "pinvoke.net: EnumWindows");
