@@ -8,6 +8,10 @@ class Program
         Console.WriteLine(message);
     }
 
+    static void ProcessToggleMute() {
+        Console.WriteLine("Toggle mute");
+    }
+
     private const int READ_BUFFER_SIZE=1024;
     private const int WRITE_BUFFER_SIZE=1024;
     private const int READ_TIMEOUT_MILLIS=100;
@@ -30,15 +34,11 @@ class Program
 
         inputPort.Open();
 
-        var reader=new SerialReader(ProcessDebugMessage, inputPort);    
+        var reader=new SerialReader(ProcessToggleMute, ProcessDebugMessage, inputPort);    
         reader.Start();
 
-        var writer=new SerialWriter(inputPort);
-        while (true) {
-            writer.SendHello();
-            Console.WriteLine("HELLO");
-            Thread.Sleep(1000);
-        }
+       // var writer=new SerialWriter(inputPort);
+        Console.ReadLine();
        
         reader.Stop();
         inputPort.Close();

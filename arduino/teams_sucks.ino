@@ -1,19 +1,23 @@
 
-#include "pinout.h"
 #include <LiquidCrystal.h>
 
-
-// Serial port
-const long SERIAL_WAIT_DELAY=1000; 
-const unsigned long SERIAL_BAUD_RATE=9600;
+// Pins
+const uint8_t PIN_BRING_TO_FRONT=PIN6;
+const uint8_t PIN_TOGGLE_MUTE=PIN7;
 
 // Misc
 const unsigned long DEBOUNCE_DELAY=100;
 
-// OpCodes
-const byte OPCODE_DEBUG=0xFF;
+// LCD Display -->
 
-LiquidCrystal lcd=LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, PIN_LCD_DATA_4,  PIN_LCD_DATA_5,  PIN_LCD_DATA_6,  PIN_LCD_DATA_7);
+const uint8_t PIN_LCD_REGISTER_SELECT=12;
+const uint8_t PIN_LCD_ENABLE=11;
+const uint8_t PIN_LCD_DATA_4=5;
+const uint8_t PIN_LCD_DATA_5=4;
+const uint8_t PIN_LCD_DATA_6=3;
+const uint8_t PIN_LCD_DATA_7=2;
+
+LiquidCrystal lcd=LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
 void setupLCD() {
 	// Set up LCD display
@@ -32,7 +36,7 @@ void message(const char* message) {
 
 const unsigned long startTimeMillis=millis();
 
-const char* helpMessages[]= { "1 => Front", "2 => (Un)mute", "3 => Camera"};
+const char* helpMessages[]= { "Teams Sucks", "1 => Front", "2 => (Un)mute", "3 => Camera" };
 const int helpThresholdMillis=3000;
 int currentHelpIndex=0;
 int numHelpMessages=sizeof(helpMessages)/sizeof(char*);
@@ -56,7 +60,6 @@ void updateHelp() {
 		}
 	}
 }
-
 
 unsigned long statusLastSet=0;
 bool statusIsBlank=true;
@@ -87,14 +90,53 @@ void lcdTick() {
 	updateStatus();
 }
 
+// <-- LCD Display
+
+// Protocol -->
+
+// OpCodes
+const byte OPCODE_BRING_TO_FRONT=0x01;
+const byte OPCODE_TOGGLE_MUTE=0x02;
+const byte OPCODE_TOGGLE_CAMERA=0x03;
+const byte OPCODE_DEBUG=0xFF;
+
+void sendDebug(char* message) {
+	Serial.write(1+strlen(message));
+	Serial.write(OPCODE_DEBUG);
+	Serial.print(message); 
+	Serial.flush();
+}
+
+void sendOpCode(byte opCode) {
+	Serial.write(1);
+	Serial.write(opCode);
+	Serial.flush();
+}
+
+void sendBringToFront() {
+	sendOpCode(OPCODE_BRING_TO_FRONT);
+}
+
+void sendToggleMute() {
+	sendOpCode(OPCODE_TOGGLE_MUTE);
+}
+
+void sendToggleCamera() {
+	sendOpCode(OPCODE_TOGGLE_CAMERA);
+}
+
+// <-- Protocol
+
+// Initialization -->
+
+// Serial port settings
+const long SERIAL_WAIT_DELAY=1000; 
+const unsigned long SERIAL_BAUD_RATE=9600;
 
 void setup()
 {
 	// Initialise the LCD display
 	setupLCD();
-
-	// Welcome message
-	message("Teams Sucks");
 
 	// Set up serial over USB
 	Serial.begin(SERIAL_BAUD_RATE);
@@ -106,36 +148,52 @@ void setup()
 
 	// Bring to front
 	pinMode(PIN_BRING_TO_FRONT, INPUT);
-
-	delay(1000);
-
-	statusMessage("Hello there!");
 }
 
-bool broughtToTop=false;
+// <-- Initialization
+
+bool bringToFrontPressed=false;
+bool toggleMutePressed=false;
 
 void loop()
 {	
 	lcdTick();
 
-	if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
-		if (!broughtToTop) {
-			Serial.write(2);
-			Serial.write(OPCODE_DEBUG);
-			Serial.print("Q"); 
-			broughtToTop=true;
-			Serial.flush();
+	// if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
+	// 	if (!bringToFrontPressed) {
+	// 		sendBringToFront(); 
+	// 		statusMessage("Bring to front");
+	// 		bringToFrontPressed=true;
+	// 	}
+	// }
+	// else
+	// {
+	// 	bringToFrontPressed=false;
+	// } 
+
+	if (digitalRead(PIN_TOGGLE_MUTE)==HIGH) {
+		if (!toggleMutePressed) {
+			sendToggleMute(); 
+			statusMessage("Toggle mute");
+			toggleMutePressed=true;
 		}
 	}
 	else
 	{
-		broughtToTop=false;
+		toggleMutePressed=false;
 	}
 
-	delay(DEBOUNCE_DELAY);
-}
+	// if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
+	// 	if (!bringToFrontPressed) {
+	// 		sendToggleCamera(); 
+	// 		statusMessage("Bring to front");
+	// 		bringToFrontPressed=true;
+	// 	}
+	// }
+	// else
+	// {
+	// 	bringToFrontPressed=false;
+	// }
 
-void serialEvent() {
-	int charRead=Serial.read();
-	lcd.print("H");
+	delay(DEBOUNCE_DELAY);
 }

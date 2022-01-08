@@ -5,16 +5,21 @@ using System.Text;
 
 public class SerialReader 
 {
-    private const byte OP_CODE_DEBUG=0xFF;
+    private const byte OPCODE_BRING_TO_FRONT=0x01;
+    private const byte OPCODE_TOGGLE_MUTE=0x02;
+    private const byte OPCODE_TOGGLE_CAMERA=0x03;
+    private const byte OPCODE_DEBUG=0xFF;
 
     private Task _readerTask;
 
     private SerialPort _inputPort;
 
+    private readonly Action _toggleMuteCallback;
     private readonly Action<string> _debugCallback;
 
-    public SerialReader(Action<string> debugCallback, SerialPort serialPort) {
+    public SerialReader(Action toggleMuteCallback, Action<string> debugCallback, SerialPort serialPort) {
         
+        _toggleMuteCallback=toggleMuteCallback;
         _debugCallback=debugCallback;
         _inputPort=serialPort;
     }
@@ -56,8 +61,11 @@ public class SerialReader
                 Console.WriteLine(BitConverter.ToString(buffer));
 
                 switch (opCode) {
-                    case OP_CODE_DEBUG:
+                    case OPCODE_DEBUG:
                         _debugCallback(new ASCIIEncoding().GetString(buffer, 1, sizeByte-1));
+                        break;
+                    case OPCODE_TOGGLE_MUTE:
+                        _toggleMuteCallback();
                         break;
                     default:
                         Console.WriteLine("ERROR");
