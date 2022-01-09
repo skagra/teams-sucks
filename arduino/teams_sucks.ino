@@ -2,20 +2,27 @@
 #include <LiquidCrystal.h>
 
 // Pins
-const uint8_t PIN_BRING_TO_FRONT=PIN6;
-const uint8_t PIN_TOGGLE_MUTE=PIN7;
-
+const uint8_t PIN_BRING_TO_FRONT=8;
+const uint8_t PIN_TOGGLE_MUTE=9;
+const uint8_t PIN_TOGGLE_CAMERA=10;
 // Misc
 const unsigned long DEBOUNCE_DELAY=100;
 
 // LCD Display -->
 
-const uint8_t PIN_LCD_REGISTER_SELECT=12;
-const uint8_t PIN_LCD_ENABLE=11;
-const uint8_t PIN_LCD_DATA_4=5;
-const uint8_t PIN_LCD_DATA_5=4;
-const uint8_t PIN_LCD_DATA_6=3;
-const uint8_t PIN_LCD_DATA_7=2;
+// const uint8_t PIN_LCD_REGISTER_SELECT=8;
+// const uint8_t PIN_LCD_ENABLE=12;
+// const uint8_t PIN_LCD_DATA_4=5;
+// const uint8_t PIN_LCD_DATA_5=4;
+// const uint8_t PIN_LCD_DATA_6=3;
+// const uint8_t PIN_LCD_DATA_7=2;
+
+const uint8_t PIN_LCD_REGISTER_SELECT=2;
+const uint8_t PIN_LCD_ENABLE=3;
+const uint8_t PIN_LCD_DATA_4=4;
+const uint8_t PIN_LCD_DATA_5=5;
+const uint8_t PIN_LCD_DATA_6=6;
+const uint8_t PIN_LCD_DATA_7=7;
 
 LiquidCrystal lcd=LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
@@ -148,28 +155,31 @@ void setup()
 
 	// Bring to front
 	pinMode(PIN_BRING_TO_FRONT, INPUT);
+	pinMode(PIN_TOGGLE_MUTE, INPUT);
+	pinMode(PIN_TOGGLE_CAMERA, INPUT);
 }
 
 // <-- Initialization
 
 bool bringToFrontPressed=false;
 bool toggleMutePressed=false;
+bool toggleMuteCameraPressed=false;
 
 void loop()
 {	
 	lcdTick();
 
-	// if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
-	// 	if (!bringToFrontPressed) {
-	// 		sendBringToFront(); 
-	// 		statusMessage("Bring to front");
-	// 		bringToFrontPressed=true;
-	// 	}
-	// }
-	// else
-	// {
-	// 	bringToFrontPressed=false;
-	// } 
+	if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
+		if (!bringToFrontPressed) {
+			sendBringToFront(); 
+			statusMessage("Bring to front");
+			bringToFrontPressed=true;
+		}
+	}
+	else
+	{
+		bringToFrontPressed=false;
+	} 
 
 	if (digitalRead(PIN_TOGGLE_MUTE)==HIGH) {
 		if (!toggleMutePressed) {
@@ -183,17 +193,17 @@ void loop()
 		toggleMutePressed=false;
 	}
 
-	// if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
-	// 	if (!bringToFrontPressed) {
-	// 		sendToggleCamera(); 
-	// 		statusMessage("Bring to front");
-	// 		bringToFrontPressed=true;
-	// 	}
-	// }
-	// else
-	// {
-	// 	bringToFrontPressed=false;
-	// }
+	if (digitalRead(PIN_TOGGLE_CAMERA)==HIGH) {
+		if (!toggleMuteCameraPressed) {
+			sendToggleCamera(); 
+			statusMessage("Toggle camera");
+			toggleMuteCameraPressed=true;
+		}
+	}
+	else
+	{
+		toggleMuteCameraPressed=false;
+	}
 
 	delay(DEBOUNCE_DELAY);
 }
