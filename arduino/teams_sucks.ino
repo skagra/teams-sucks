@@ -2,21 +2,13 @@
 #include <LiquidCrystal.h>
 
 // Pins
+
+// Switches
 const uint8_t PIN_BRING_TO_FRONT=8;
 const uint8_t PIN_TOGGLE_MUTE=9;
 const uint8_t PIN_TOGGLE_CAMERA=10;
-// Misc
-const unsigned long DEBOUNCE_DELAY=100;
 
-// LCD Display -->
-
-// const uint8_t PIN_LCD_REGISTER_SELECT=8;
-// const uint8_t PIN_LCD_ENABLE=12;
-// const uint8_t PIN_LCD_DATA_4=5;
-// const uint8_t PIN_LCD_DATA_5=4;
-// const uint8_t PIN_LCD_DATA_6=3;
-// const uint8_t PIN_LCD_DATA_7=2;
-
+// Display
 const uint8_t PIN_LCD_REGISTER_SELECT=2;
 const uint8_t PIN_LCD_ENABLE=3;
 const uint8_t PIN_LCD_DATA_4=4;
@@ -24,6 +16,13 @@ const uint8_t PIN_LCD_DATA_5=5;
 const uint8_t PIN_LCD_DATA_6=6;
 const uint8_t PIN_LCD_DATA_7=7;
 
+// Tone
+const uint8_t PIN_TONE=11;
+
+// Misc
+const unsigned long DEBOUNCE_DELAY=100;
+
+// LCD Display -->
 LiquidCrystal lcd=LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
 void setupLCD() {
@@ -134,11 +133,68 @@ void sendToggleCamera() {
 
 // <-- Protocol
 
+// --> Sound
+int currentNoteIndex=-1;
+int currentNumNotes=0;
+unsigned long currentNoteStartMillis=0;
+unsigned int* activeFrequencies;
+unsigned long* activeDurations;
+
+void play(unsigned int frequencies[], unsigned long durations[], size_t numNotes) {
+
+	currentNoteIndex=0;
+	activeFrequencies=frequencies;
+	activeDurations=durations;
+	currentNumNotes=numNotes;
+	currentNoteStartMillis=millis();
+
+	tone(PIN_TONE, activeFrequencies[0], activeDurations[0]);
+}
+
+void playTick() {
+	if (currentNoteIndex!=-1) {
+		unsigned long now=millis();
+		if (now>=currentNoteStartMillis+activeDurations[currentNoteIndex]) {
+			currentNoteIndex++;
+			if (currentNoteIndex<currentNumNotes) {
+				currentNoteStartMillis=now;
+				tone(PIN_TONE, activeFrequencies[currentNoteIndex], activeDurations[currentNoteIndex]);
+			}
+			else {
+				currentNoteIndex=-1;
+			}
+		}
+	}
+}
+
+unsigned int bringToFrontFrequencies[] = { 250, 750, 1500 };
+unsigned long bringToFrontDurations[] =  { 200, 100,  100 };
+void playButtonBringToFront() {
+	play(bringToFrontFrequencies, bringToFrontDurations, sizeof(bringToFrontFrequencies)/sizeof(unsigned int));
+}
+
+unsigned int toggleMuteFrequencies[] = { 750, 1500, 250 };
+unsigned long toggleMuteDurations[] =  { 200, 100,  100 };
+void playButtonToggleMute() {
+	play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies)/sizeof(unsigned int));
+}
+
+unsigned int toggleCameraFrequencies[] = { 1500, 750, 250 };
+unsigned long toggleCameraDurations[] =  { 200, 100,  100 };
+void playButtonToggleCamera() {
+	play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies)/sizeof(unsigned int));
+}
+
+// <-- Sound
+
 // Initialization -->
 
 // Serial port settings
 const long SERIAL_WAIT_DELAY=1000; 
 const unsigned long SERIAL_BAUD_RATE=9600;
+
+unsigned int bootFrequencies[] = { 250, 500, 750, 1250, 1500 };
+unsigned long bootDurations[] =  { 100, 100, 100, 100,  100 };
 
 void setup()
 {
@@ -157,6 +213,8 @@ void setup()
 	pinMode(PIN_BRING_TO_FRONT, INPUT);
 	pinMode(PIN_TOGGLE_MUTE, INPUT);
 	pinMode(PIN_TOGGLE_CAMERA, INPUT);
+
+	play(bootFrequencies, bootDurations, sizeof(bootFrequencies)/sizeof(unsigned int));
 }
 
 // <-- Initialization
@@ -168,12 +226,14 @@ bool toggleMuteCameraPressed=false;
 void loop()
 {	
 	lcdTick();
+	playTick();
 
 	if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
 		if (!bringToFrontPressed) {
 			sendBringToFront(); 
 			statusMessage("Bring to front");
 			bringToFrontPressed=true;
+			playButtonBringToFront();
 		}
 	}
 	else
@@ -186,6 +246,7 @@ void loop()
 			sendToggleMute(); 
 			statusMessage("Toggle mute");
 			toggleMutePressed=true;
+			playButtonToggleMute();
 		}
 	}
 	else
@@ -198,6 +259,7 @@ void loop()
 			sendToggleCamera(); 
 			statusMessage("Toggle camera");
 			toggleMuteCameraPressed=true;
+			playButtonToggleCamera();
 		}
 	}
 	else
