@@ -4,7 +4,7 @@
 // Pins
 
 // Switches
-const uint8_t PIN_BRING_TO_FRONT=8;
+const uint8_t PIN_CYCLE_WINDOWS=8;
 const uint8_t PIN_TOGGLE_MUTE=9;
 const uint8_t PIN_TOGGLE_CAMERA=10;
 
@@ -42,7 +42,7 @@ void message(const char* message) {
 
 const unsigned long startTimeMillis=millis();
 
-const char* helpMessages[]= { "Teams Sucks", "1 => Front", "2 => (Un)mute", "3 => Camera" };
+const char* helpMessages[]= { "Teams Sucks", "1 => Cycle Wins", "2 => Toggle Mute", "3 => Toggle Cam" };
 const int helpThresholdMillis=3000;
 int currentHelpIndex=0;
 int numHelpMessages=sizeof(helpMessages)/sizeof(char*);
@@ -101,7 +101,7 @@ void lcdTick() {
 // Protocol -->
 
 // OpCodes
-const byte OPCODE_BRING_TO_FRONT=0x01;
+const byte OPCODE_CYCLE_WINDOWS=0x01;
 const byte OPCODE_TOGGLE_MUTE=0x02;
 const byte OPCODE_TOGGLE_CAMERA=0x03;
 const byte OPCODE_DEBUG=0xFF;
@@ -119,8 +119,8 @@ void sendOpCode(byte opCode) {
 	Serial.flush();
 }
 
-void sendBringToFront() {
-	sendOpCode(OPCODE_BRING_TO_FRONT);
+void sendCycleWindows() {
+	sendOpCode(OPCODE_CYCLE_WINDOWS);
 }
 
 void sendToggleMute() {
@@ -167,20 +167,20 @@ void playTick() {
 	}
 }
 
-unsigned int bringToFrontFrequencies[] = { 250, 750, 1500 };
-unsigned long bringToFrontDurations[] =  { 200, 100,  100 };
-void playButtonBringToFront() {
-	play(bringToFrontFrequencies, bringToFrontDurations, sizeof(bringToFrontFrequencies)/sizeof(unsigned int));
+unsigned int cycleWindowsFrequencies[] = { 250, 750, 1250, 750, 250 };
+unsigned long cycleWindowsDurations[] =  { 100, 100, 100,  100, 100 };
+void playCycleWindows() {
+	play(cycleWindowsFrequencies, cycleWindowsDurations, sizeof(cycleWindowsFrequencies)/sizeof(unsigned int));
 }
 
-unsigned int toggleMuteFrequencies[] = { 750, 1500, 250 };
-unsigned long toggleMuteDurations[] =  { 200, 100,  100 };
+unsigned int toggleMuteFrequencies[] = { 250, 750, 1250 };
+unsigned long toggleMuteDurations[] =  { 100, 100,  100 };
 void playButtonToggleMute() {
 	play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies)/sizeof(unsigned int));
 }
 
-unsigned int toggleCameraFrequencies[] = { 1500, 750, 250 };
-unsigned long toggleCameraDurations[] =  { 200, 100,  100 };
+unsigned int toggleCameraFrequencies[] = { 1250, 750, 250 };
+unsigned long toggleCameraDurations[] =  { 100, 100,  100 };
 void playButtonToggleCamera() {
 	play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies)/sizeof(unsigned int));
 }
@@ -210,7 +210,7 @@ void setup()
 	// Set up pins
 
 	// Bring to front
-	pinMode(PIN_BRING_TO_FRONT, INPUT);
+	pinMode(PIN_CYCLE_WINDOWS, INPUT);
 	pinMode(PIN_TOGGLE_MUTE, INPUT);
 	pinMode(PIN_TOGGLE_CAMERA, INPUT);
 
@@ -219,53 +219,56 @@ void setup()
 
 // <-- Initialization
 
-bool bringToFrontPressed=false;
+bool cycleWindowsPressed=false;
 bool toggleMutePressed=false;
 bool toggleMuteCameraPressed=false;
+
+unsigned long lastKeyPressedMillis=0;
 
 void loop()
 {	
 	lcdTick();
 	playTick();
 
-	if (digitalRead(PIN_BRING_TO_FRONT)==HIGH) {
-		if (!bringToFrontPressed) {
-			sendBringToFront(); 
-			statusMessage("Bring to front");
-			bringToFrontPressed=true;
-			playButtonBringToFront();
+	if (millis()>=lastKeyPressedMillis + DEBOUNCE_DELAY || lastKeyPressedMillis==0) {
+		if (digitalRead(PIN_CYCLE_WINDOWS)==HIGH) {
+			if (!cycleWindowsPressed) {
+				sendCycleWindows(); 
+				statusMessage("Cycle windows");
+				cycleWindowsPressed=true;
+				playCycleWindows();
+			}
 		}
-	}
-	else
-	{
-		bringToFrontPressed=false;
-	} 
+		else
+		{
+			cycleWindowsPressed=false;
+		} 
 
-	if (digitalRead(PIN_TOGGLE_MUTE)==HIGH) {
-		if (!toggleMutePressed) {
-			sendToggleMute(); 
-			statusMessage("Toggle mute");
-			toggleMutePressed=true;
-			playButtonToggleMute();
+		if (digitalRead(PIN_TOGGLE_MUTE)==HIGH) {
+			if (!toggleMutePressed) {
+				sendToggleMute(); 
+				statusMessage("Toggle mute");
+				toggleMutePressed=true;
+				playButtonToggleMute();
+			}
 		}
-	}
-	else
-	{
-		toggleMutePressed=false;
-	}
-
-	if (digitalRead(PIN_TOGGLE_CAMERA)==HIGH) {
-		if (!toggleMuteCameraPressed) {
-			sendToggleCamera(); 
-			statusMessage("Toggle camera");
-			toggleMuteCameraPressed=true;
-			playButtonToggleCamera();
+		else
+		{
+			toggleMutePressed=false;
 		}
-	}
-	else
-	{
-		toggleMuteCameraPressed=false;
-	}
 
-	delay(DEBOUNCE_DELAY);
+		if (digitalRead(PIN_TOGGLE_CAMERA)==HIGH) {
+			if (!toggleMuteCameraPressed) {
+				sendToggleCamera(); 
+				statusMessage("Toggle camera");
+				toggleMuteCameraPressed=true;
+				playButtonToggleCamera();
+			}
+		}
+		else
+		{
+			toggleMuteCameraPressed=false;
+		}
+		lastKeyPressedMillis=millis();
+	}
 }

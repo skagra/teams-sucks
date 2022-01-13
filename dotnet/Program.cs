@@ -23,10 +23,10 @@ namespace TeamsSucks
          _teamsController.ToggleCamera();
       }
 
-      static void ProcessBringToFront()
+      static void ProcessCycleWindows()
       {
-         Console.WriteLine("Bring to front");
-         _teamsController.BringToFront();
+         Console.WriteLine("Cycle windows");
+         _teamsController.CycleTeamsWindows();
       }
 
       private const int READ_BUFFER_SIZE = 1024;
@@ -34,7 +34,7 @@ namespace TeamsSucks
       private const int READ_TIMEOUT_MILLIS = 100;
       private const int WRITE_TIMEOUT_MILLIS = 100;
 
-      private const string PORT_NAME = "COM4";
+      private const string PORT_NAME = "COM6";
       private const int BAUD_RATE = 9600;
       private const Parity PARITY = Parity.None;
       private const int DATA_BITS = 8;
@@ -51,10 +51,9 @@ namespace TeamsSucks
 
          inputPort.Open();
 
-         var reader = new SerialReader(ProcessBringToFront, ProcessToggleMute, ProcessToggleCamera, ProcessDebugMessage, inputPort);
+         var reader = new SerialReader(ProcessCycleWindows, ProcessToggleMute, ProcessToggleCamera, ProcessDebugMessage, inputPort);
          reader.Start();
 
-         // var writer=new SerialWriter(inputPort);
          Console.ReadLine();
 
          reader.Stop();

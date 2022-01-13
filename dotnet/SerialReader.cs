@@ -1,28 +1,25 @@
-using System;
 using System.IO.Ports;
-using System.Threading;
 using System.Text;
 
 namespace TeamsSucks
 {
     public class SerialReader 
     {
-        private const byte OPCODE_BRING_TO_FRONT=0x01;
+        private const byte OPCODE_CYCLE_WINDOWS=0x01;
         private const byte OPCODE_TOGGLE_MUTE=0x02;
         private const byte OPCODE_TOGGLE_CAMERA=0x03;
         private const byte OPCODE_DEBUG=0xFF;
 
-        private Task _readerTask;
         private SerialPort _inputPort;
 
-        private readonly Action _bringToFrontCallback;
+        private readonly Action _cycleWindowsCallback;
         private readonly Action _toggleMuteCallback;
         private readonly Action _toggleCameraCallback;
         private readonly Action<string> _debugCallback;
 
-        public SerialReader(Action bringToFrontCallback, Action toggleMuteCallback, Action toggleCameraCallback, Action<string> debugCallback, SerialPort serialPort) {
+        public SerialReader(Action cycleWindowsCallback, Action toggleMuteCallback, Action toggleCameraCallback, Action<string> debugCallback, SerialPort serialPort) {
             
-            _bringToFrontCallback=bringToFrontCallback;
+            _cycleWindowsCallback=cycleWindowsCallback;
             _toggleMuteCallback=toggleMuteCallback;
             _toggleCameraCallback=toggleCameraCallback;
             _debugCallback=debugCallback;
@@ -31,9 +28,16 @@ namespace TeamsSucks
         
         public void Start()
         {
-            _readerTask=Task.Run(() => {
+            Task.Run(() => {
                 while (true) {
-                    ReadMessage();
+                    try
+                    {
+                        ReadMessage();
+                    } 
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }    
             });
         }
@@ -41,7 +45,7 @@ namespace TeamsSucks
         public void Stop()
         {
             _inputPort.Dispose();
-            _inputPort = null;
+            //_inputPort = null;
             // stop thread etc.
         }
 
@@ -66,8 +70,8 @@ namespace TeamsSucks
                     Console.WriteLine(BitConverter.ToString(buffer));
 
                     switch (opCode) {
-                    case OPCODE_BRING_TO_FRONT:
-                            _bringToFrontCallback();
+                    case OPCODE_CYCLE_WINDOWS:
+                            _cycleWindowsCallback();
                             break;
                         case OPCODE_TOGGLE_MUTE:
                             _toggleMuteCallback();
