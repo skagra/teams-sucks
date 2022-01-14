@@ -53,7 +53,13 @@ namespace TeamsSucks
          var allTeamsWindows = GetAllTeamsWindows();
          IntPtr activeWindow = GetForegroundWindow();
 
-         if (allTeamsWindows.Contains(activeWindow))
+         ok = allTeamsWindows.Contains(activeWindow);
+         if (!ok)
+         {
+            ok = CycleTeamsWindows();
+         }
+
+         if (ok)
          {
             keybd_event(VK_SHIFT, 0, 0, IntPtr.Zero);
             keybd_event(VK_CTRL, 0, 0, IntPtr.Zero);
@@ -61,8 +67,6 @@ namespace TeamsSucks
             keybd_event(VK_M, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_CTRL, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_SHIFT, 0, KEYUP, IntPtr.Zero);
-
-            ok = true;
          }
          else
          {
@@ -79,7 +83,13 @@ namespace TeamsSucks
          var allTeamsWindows = GetAllTeamsWindows();
          IntPtr activeWindow = GetForegroundWindow();
 
-         if (allTeamsWindows.Contains(activeWindow))
+         ok = allTeamsWindows.Contains(activeWindow);
+         if (!ok)
+         {
+            ok = CycleTeamsWindows();
+         }
+
+         if (ok)
          {
             keybd_event(VK_SHIFT, 0, 0, IntPtr.Zero);
             keybd_event(VK_CTRL, 0, 0, IntPtr.Zero);
@@ -87,8 +97,6 @@ namespace TeamsSucks
             keybd_event(VK_O, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_CTRL, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_SHIFT, 0, KEYUP, IntPtr.Zero);
-
-            ok = true;
          }
          else
          {
@@ -100,15 +108,22 @@ namespace TeamsSucks
 
       public bool CycleTeamsWindows()
       {
+         bool ok = false;
+
          var hWnd = GetNextWindow();
          if (hWnd != (IntPtr)0)
          {
             ShowWindow(hWnd, SW_SHOWMAXIMIZED);
             BringWindowToTop(hWnd);
             SetForegroundWindow(hWnd);
+            ok = true;
+         }
+         else
+         {
+            _logger.Info("Teams is not running");
          }
 
-         return true;
+         return ok;
       }
 
       private IntPtr GetTeamsMainWindowHandle()
@@ -166,7 +181,6 @@ namespace TeamsSucks
 
          if (mainWindow != (IntPtr)0)
          {
-
             var allTeamsWindows = GetAllTeamsWindows();
             allTeamsWindows.Sort();
 
