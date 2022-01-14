@@ -9,7 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="nlog" Version="4.7.13" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
     <PackageReference Include="System.IO.Ports" Version="6.0.0" />
   </ItemGroup>
+
+   <ItemGroup> 
+      <None Update="NLog.config">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+   </ItemGroup>
+
+
 
 </Project>

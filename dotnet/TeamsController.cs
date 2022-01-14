@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using NLog;
 
 // TODO: Add teams is running check
 namespace TeamsSucks
@@ -32,15 +33,23 @@ namespace TeamsSucks
       [DllImport("user32.dll")]
       private static extern IntPtr GetForegroundWindow();
 
-      private readonly SerialWriter _writer;
+      private const byte VK_SHIFT = 0x10;
+      private const byte VK_CTRL = 0x11;
+      private const byte VK_M = 0x4D; // Mute
+      private const byte VK_O = 0x4F; // Camera
+      private const int KEYUP = 0x2;
+      private const int SW_SHOWMAXIMIZED = 3;
 
-      public TeamsController(SerialWriter writer)
+      private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
+      public TeamsController()
       {
-         _writer = writer;
       }
 
-      public void ToggleMute()
+      public bool ToggleMute()
       {
+         bool ok = false;
+
          var allTeamsWindows = GetAllTeamsWindows();
          IntPtr activeWindow = GetForegroundWindow();
 
@@ -52,16 +61,21 @@ namespace TeamsSucks
             keybd_event(VK_M, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_CTRL, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_SHIFT, 0, KEYUP, IntPtr.Zero);
+
+            ok = true;
          }
          else
          {
-            _writer.SendError();
-            Console.WriteLine("Current window is not a teams one!");
+            _logger.Info("Current window is not a Teams window");
          }
+
+         return ok;
       }
 
-      public void ToggleCamera()
+      public bool ToggleCamera()
       {
+         bool ok = false;
+
          var allTeamsWindows = GetAllTeamsWindows();
          IntPtr activeWindow = GetForegroundWindow();
 
@@ -74,15 +88,17 @@ namespace TeamsSucks
             keybd_event(VK_CTRL, 0, KEYUP, IntPtr.Zero);
             keybd_event(VK_SHIFT, 0, KEYUP, IntPtr.Zero);
 
+            ok = true;
          }
          else
          {
-            _writer.SendError();
-            Console.WriteLine("Current window is not a teams one!");
+            _logger.Info("Current window is not a Teams window");
          }
+
+         return ok;
       }
 
-      public void CycleTeamsWindows()
+      public bool CycleTeamsWindows()
       {
          var hWnd = GetNextWindow();
          if (hWnd != (IntPtr)0)
@@ -91,14 +107,9 @@ namespace TeamsSucks
             BringWindowToTop(hWnd);
             SetForegroundWindow(hWnd);
          }
-      }
 
-      private const byte VK_SHIFT = 0x10;
-      private const byte VK_CTRL = 0x11;
-      private const byte VK_M = 0x4D; // Mute
-      private const byte VK_O = 0x4F; // Camera
-      private const int KEYUP = 0x2;
-      private const int SW_SHOWMAXIMIZED = 3;
+         return true;
+      }
 
       private IntPtr GetTeamsMainWindowHandle()
       {

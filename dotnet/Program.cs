@@ -1,32 +1,48 @@
 using System.IO.Ports;
+using NLog;
 
 namespace TeamsSucks
 {
-   class Program
+   public class Program
    {
-      private static TeamsController _teamsController;
+      private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
+      private static ProtocolReader _protocolReader;
+      private static ProtocolWriter _protocolWriter;
+
+      private static TeamsController _teamsController = new TeamsController();
 
       static void ProcessDebugMessage(string message)
       {
-         Console.WriteLine($"Debug: {message}");
+         _logger.Debug("Debug: {0}", message);
       }
 
       static void ProcessToggleMute()
       {
-         Console.WriteLine("Toggle mute");
-         _teamsController.ToggleMute();
+         _logger.Debug("Toggle mute");
+         if (!_teamsController.ToggleMute())
+         {
+            _protocolWriter.SendError();
+         }
+
       }
 
       static void ProcessToggleCamera()
       {
-         Console.WriteLine("Toggle camera");
-         _teamsController.ToggleCamera();
+         _logger.Debug("Toggle camera");
+         if (!_teamsController.ToggleCamera())
+         {
+            _protocolWriter.SendError();
+         }
       }
 
       static void ProcessCycleWindows()
       {
-         Console.WriteLine("Cycle windows");
-         _teamsController.CycleTeamsWindows();
+         _logger.Debug("Cycle windows");
+         if (!_teamsController.CycleTeamsWindows())
+         {
+            _protocolWriter.SendError();
+         }
       }
 
       private const int READ_BUFFER_SIZE = 1024;
@@ -42,27 +58,24 @@ namespace TeamsSucks
 
       static void Main(string[] Arguments)
       {
-         var inputPort = new SerialPort(PORT_NAME, BAUD_RATE, PARITY, DATA_BITS, STOP_BITS);
+         var serialPort = new SerialPort(PORT_NAME, BAUD_RATE, PARITY, DATA_BITS, STOP_BITS);
 
-         inputPort.ReadBufferSize = READ_BUFFER_SIZE;
-         inputPort.WriteBufferSize = WRITE_BUFFER_SIZE;
-         inputPort.ReadTimeout = READ_TIMEOUT_MILLIS;
-         inputPort.WriteTimeout = WRITE_TIMEOUT_MILLIS;
+         serialPort.ReadBufferSize = READ_BUFFER_SIZE;
+         serialPort.WriteBufferSize = WRITE_BUFFER_SIZE;
+         serialPort.ReadTimeout = READ_TIMEOUT_MILLIS;
+         serialPort.WriteTimeout = WRITE_TIMEOUT_MILLIS;
 
-         inputPort.Open();
+         serialPort.Open();
 
-         var reader = new SerialReader(ProcessCycleWindows, ProcessToggleMute, ProcessToggleCamera, ProcessDebugMessage, inputPort);
+         _protocolReader = new ProtocolReader(ProcessCycleWindows, ProcessToggleMute, ProcessToggleCamera, ProcessDebugMessage, serialPort);
+         _protocolWriter = new ProtocolWriter(serialPort);
 
-         var writer = new SerialWriter(inputPort);
-
-         _teamsController = new TeamsController(writer);
-
-         reader.Start();
+         _protocolReader.Start();
 
          Console.ReadLine();
 
-         reader.Stop();
-         inputPort.Close();
+         _protocolReader.Stop();
+         serialPort.Close();
       }
    }
 }
