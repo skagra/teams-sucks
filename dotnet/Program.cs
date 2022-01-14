@@ -4,7 +4,7 @@ namespace TeamsSucks
 {
    class Program
    {
-      private static readonly TeamsController _teamsController = new TeamsController();
+      private static TeamsController _teamsController;
 
       static void ProcessDebugMessage(string message)
       {
@@ -34,7 +34,7 @@ namespace TeamsSucks
       private const int READ_TIMEOUT_MILLIS = 100;
       private const int WRITE_TIMEOUT_MILLIS = 100;
 
-      private const string PORT_NAME = "COM6";
+      private const string PORT_NAME = "COM5";
       private const int BAUD_RATE = 9600;
       private const Parity PARITY = Parity.None;
       private const int DATA_BITS = 8;
@@ -52,6 +52,11 @@ namespace TeamsSucks
          inputPort.Open();
 
          var reader = new SerialReader(ProcessCycleWindows, ProcessToggleMute, ProcessToggleCamera, ProcessDebugMessage, inputPort);
+
+         var writer = new SerialWriter(inputPort);
+
+         _teamsController = new TeamsController(writer);
+
          reader.Start();
 
          Console.ReadLine();

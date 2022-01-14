@@ -17,9 +17,10 @@ Function    | Length | OpCode | Payload |
 
 ## Operations
 
-| OpCode | Name           | Direction | Payload      | Description                                            |
-| ------ | -------------- | --------- | ------------ | ------------------------------------------------------ |
-| 0x01   | Bring to Front | Out       | -            | Bring the teams meeting window to the front + maximise |
-| 0x02   | Toggle Mute    | Out       | -            | Toggle microphone mute                                 |
-| 0x03   | Toggle Video   | Out       | -            | Toggle video camera                                    |
-| 0xFF   | Debug          | Out       | String       | Send a debug message                                   |
+| OpCode | Name           | Direction | Payload | Description                                            |
+| ------ | -------------- | --------- | ------- | ------------------------------------------------------ |
+| 0x01   | Bring to Front | Out       | -       | Bring the teams meeting window to the front + maximize |
+| 0x02   | Toggle Mute    | Out       | -       | Toggle microphone mute                                 |
+| 0x03   | Toggle Video   | Out       | -       | Toggle video camera                                    |
+| 0x04   | Error          | In        | -       | An error condition has occurred                        |
+| 0xFF   | Debug          | Out       | String  | Send a debug message                                   |
