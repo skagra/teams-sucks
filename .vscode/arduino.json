@@ -1,7 +1,7 @@
 {
-    "sketch": "arduino\\teams_sucks.ino",
+    "sketch": "arduino\\program.ino",
     "board": "arduino:avr:nano",
     "output": "arduino\\build",
-    "port": "COM5",
+    "port": "COM6",
     "configuration": "cpu=atmega328old"
 }

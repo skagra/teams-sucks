@@ -1,2 +1,3 @@
-# teams-sucks
+# Teams Sucks
+
 Innovation week Teams project
