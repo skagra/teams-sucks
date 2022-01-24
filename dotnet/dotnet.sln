@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet", "dotnet.csproj", "{1E8518AF-B4E7-498D-8895-224D9EE750A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "client", "client\client.csproj", "{A87F832C-4CFF-4EF9-85AE-ED7D00C9A6BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btconsole", "btconsole\btconsole.csproj", "{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E8518AF-B4E7-498D-8895-224D9EE750A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E8518AF-B4E7-498D-8895-224D9EE750A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E8518AF-B4E7-498D-8895-224D9EE750A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E8518AF-B4E7-498D-8895-224D9EE750A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A87F832C-4CFF-4EF9-85AE-ED7D00C9A6BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A87F832C-4CFF-4EF9-85AE-ED7D00C9A6BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A87F832C-4CFF-4EF9-85AE-ED7D00C9A6BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A87F832C-4CFF-4EF9-85AE-ED7D00C9A6BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
