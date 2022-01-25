@@ -9,8 +9,8 @@ namespace TeamsSucks
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private static ProtocolReader _protocolReader;
-        private static ProtocolWriter _protocolWriter;
+        private static ProtocolReader? _protocolReader;
+        private static ProtocolWriter? _protocolWriter;
 
         private static TeamsController _teamsController = new TeamsController();
 

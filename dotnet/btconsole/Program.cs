@@ -1,57 +1,24 @@
 ﻿
-using InTheHand.Net.Bluetooth;
-using InTheHand.Net.Sockets;
-
-public class Program
+namespace TeamSucks
 {
-    private const string DEVICE_NAME = "HC-05";
-
-    public static void Main(string[] args)
+    public class Program
     {
-        var client = new BluetoothClient();
+        private const string DEVICE_NAME = "HC-05";
+        private const string DEVICE_PASSWORD = "1234";
 
-        Console.Write($"Searching for {DEVICE_NAME}...");
-        BluetoothDeviceInfo arduino = null;
-        foreach(var device in client.DiscoverDevices())
+        public static void Main(string[] args)
         {
-            if (device.DeviceName == DEVICE_NAME)
+            using (var client = new BluetoothManager(DEVICE_NAME, DEVICE_PASSWORD))
             {
-                arduino = device;
-                break;
+                var stream = client.Connect();
+                var reader = new StreamReader(stream, System.Text.Encoding.ASCII);
+
+                Console.WriteLine("Listening");
+                while (true)
+                {
+                    Console.WriteLine(reader.ReadLine());
+                }
             }
-        }
-
-        if (arduino != null)
-        {
-            Console.WriteLine("found");
-
-            Console.WriteLine($"Address: {arduino.DeviceAddress}");
-
-            if (!arduino.Authenticated)
-            {
-                BluetoothSecurity.PairRequest(arduino.DeviceAddress, "1234");
-            }
-
-            arduino.Refresh();
-
-            Console.Write("Connecting...");
-            client.Connect(arduino.DeviceAddress, BluetoothService.SerialPort);
-            Console.WriteLine("connected");
-
-            var stream = client.GetStream();
-           
-            StreamReader reader = new StreamReader(stream, System.Text.Encoding.ASCII);
-            
-            Console.WriteLine("Listening");
-            while (true)
-            {
-                Console.WriteLine(reader.ReadLine());
-            }
-            reader.Close();
-        }
-        else
-        {
-            Console.WriteLine("NOT found");
         }
     }
 }

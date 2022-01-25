@@ -9,7 +9,18 @@
 
   <ItemGroup>
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.0.25" />
+    <PackageReference Include="nlog" Version="4.7.13" />
     <PackageReference Include="System.Management" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\bluetooth\bluetooth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "client", "client\client.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btconsole", "btconsole\btconsole.csproj", "{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bluetooth", "bluetooth\bluetooth.csproj", "{6F646DD4-73DA-40B1-9C7B-8B7923ADD781}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0979ABE0-B0CB-4FD2-AB12-DC18E233517C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F646DD4-73DA-40B1-9C7B-8B7923ADD781}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F646DD4-73DA-40B1-9C7B-8B7923ADD781}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F646DD4-73DA-40B1-9C7B-8B7923ADD781}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F646DD4-73DA-40B1-9C7B-8B7923ADD781}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
