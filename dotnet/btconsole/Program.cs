@@ -13,7 +13,6 @@ namespace TeamSucks
                 var stream = client.Connect();
                 var reader = new StreamReader(stream, System.Text.Encoding.ASCII);
 
-                Console.WriteLine("Listening");
                 while (true)
                 {
                     Console.WriteLine(reader.ReadLine());
