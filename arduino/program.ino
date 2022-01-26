@@ -1,3 +1,4 @@
+// Define to build for Bluetooth else serial over USB
 #define _USE_BT_
 
 #include <LiquidCrystal.h>
@@ -80,7 +81,8 @@ void playTick()
 // <-- Sound
 
 // LCD Display -->
-LiquidCrystal lcd = LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
+LiquidCrystal lcd = LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, 
+   PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
 void setupLCD()
 {
