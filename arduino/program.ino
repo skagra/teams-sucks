@@ -312,6 +312,12 @@ void setup()
    pinMode(PIN_TOGGLE_MUTE, INPUT);
    pinMode(PIN_TOGGLE_CAMERA, INPUT);
 
+#ifdef _USE_BT_
+   statusMessage("Bluetooth comms");
+#else
+   statusMessage("Serial comms");
+#endif
+
    play(bootFrequencies, bootDurations, sizeof(bootFrequencies) / sizeof(unsigned int));
 }
 
