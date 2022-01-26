@@ -13,6 +13,11 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
     <PackageReference Include="System.IO.Ports" Version="6.0.0" />
     <PackageReference Include="system.management" Version="6.0.0" />
+    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.0.25" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\bluetooth\bluetooth.csproj" />
   </ItemGroup>
 
    <ItemGroup> 
@@ -20,6 +25,5 @@
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
    </ItemGroup>
-
-
+   
 </Project>

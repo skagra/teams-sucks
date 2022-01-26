@@ -8,17 +8,17 @@ namespace TeamsSucks
       private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
       private const byte OPCODE_ERROR = 0x04;
-      private readonly SerialPort _serialPort;
 
-      public ProtocolWriter(SerialPort serialPort)
+      private Action<byte[], int, int> _writer;
+
+      public ProtocolWriter(Action<byte[], int, int> writer)
       {
-         _serialPort = serialPort;
+         _writer = writer;
       }
 
       public void SendError()
       {
-         _serialPort.Write(new byte[] { 1, OPCODE_ERROR }, 0, 2);
+         _writer(new byte[] { 1, OPCODE_ERROR }, 0, 2);
       }
-
    }
 }

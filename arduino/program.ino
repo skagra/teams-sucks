@@ -4,7 +4,7 @@
 
 #ifdef _USE_BT_
 #include <SoftwareSerial.h>
-#endif 
+#endif
 
 // Pins
 
@@ -25,14 +25,13 @@ const uint8_t PIN_LCD_DATA_7 = 7;
 const uint8_t PIN_TONE = 11;
 
 #ifdef _USE_BT_
-const uint8_t PIN_BT_RX=12;
-const uint8_t PIN_BT_TX=13;
-SoftwareSerial blueTooth=SoftwareSerial(PIN_BT_RX, PIN_BT_TX);
+const uint8_t PIN_BT_RX = 12;
+const uint8_t PIN_BT_TX = 13;
+SoftwareSerial blueTooth = SoftwareSerial(PIN_BT_RX, PIN_BT_TX);
 #define SERIAL_INF blueTooth
 #else
 #define SERIAL_INF Serial
 #endif
-
 
 // Misc
 const unsigned long DEBOUNCE_DELAY = 100;

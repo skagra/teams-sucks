@@ -12,22 +12,21 @@ namespace TeamsSucks
       private const byte OPCODE_TOGGLE_MUTE = 0x02;
       private const byte OPCODE_TOGGLE_CAMERA = 0x03;
       private const byte OPCODE_DEBUG = 0xFF;
-
-      private readonly SerialPort _serialPort;
-
       private readonly Action _cycleWindowsCallback;
       private readonly Action _toggleMuteCallback;
       private readonly Action _toggleCameraCallback;
       private readonly Action<string> _debugCallback;
+      private Func<byte[], int, int, int> _reader;
 
-      public ProtocolReader(Action cycleWindowsCallback, Action toggleMuteCallback, Action toggleCameraCallback, Action<string> debugCallback, SerialPort serialPort)
+      public ProtocolReader(Action cycleWindowsCallback, Action toggleMuteCallback, Action toggleCameraCallback, Action<string> debugCallback,
+          Func<byte[], int, int, int> reader)
       {
 
          _cycleWindowsCallback = cycleWindowsCallback;
          _toggleMuteCallback = toggleMuteCallback;
          _toggleCameraCallback = toggleCameraCallback;
          _debugCallback = debugCallback;
-         _serialPort = serialPort;
+         _reader = reader;
       }
 
       public void Start()
@@ -50,56 +49,46 @@ namespace TeamsSucks
 
       public void Stop()
       {
-         _serialPort.Dispose();
-         //_inputPort = null;
          // stop thread etc.
       }
 
       private void ReadMessage()
       {
-         if (_serialPort.BytesToRead > 0)
+         // Read the size byte
+         var byteBuffer = new byte[1];
+         _reader(byteBuffer, 0, 1);
+         byte sizeByte = byteBuffer[0];
+
+         // Read the rest of the packet
+         byte[] buffer = new byte[sizeByte];
+         var read = 0;
+         while (read < sizeByte)
          {
-            // Get length of packet (not including length byte)
-            byte sizeByte = (byte)_serialPort.ReadByte();
-            byte[] buffer = new byte[sizeByte];
+            read += _reader(buffer, read, sizeByte - read);
+         }
 
-            try
-            {
-               // Read the rest of the packet
-               var read = 0;
-               while (read < sizeByte)
-               {
-                  read += _serialPort.Read(buffer, read, sizeByte - read);
-               }
+         // Get the op code
+         byte opCode = buffer[0];
 
-               // Get the op code
-               byte opCode = buffer[0];
+         _logger.Debug("Incoming protocol '{0}'", (BitConverter.ToString(buffer)));
 
-               _logger.Debug("Incoming protocol '{0}'", (BitConverter.ToString(buffer)));
-
-               switch (opCode)
-               {
-                  case OPCODE_CYCLE_WINDOWS:
-                     _cycleWindowsCallback();
-                     break;
-                  case OPCODE_TOGGLE_MUTE:
-                     _toggleMuteCallback();
-                     break;
-                  case OPCODE_TOGGLE_CAMERA:
-                     _toggleCameraCallback();
-                     break;
-                  case OPCODE_DEBUG:
-                     _debugCallback(new ASCIIEncoding().GetString(buffer, 1, sizeByte - 1));
-                     break;
-                  default:
-                     _logger.Error("Invalid OPCODE {0}", opCode);
-                     break;
-               }
-            }
-            catch (TimeoutException)
-            {
-               _logger.Error("Read timeout");
-            }
+         switch (opCode)
+         {
+            case OPCODE_CYCLE_WINDOWS:
+               _cycleWindowsCallback();
+               break;
+            case OPCODE_TOGGLE_MUTE:
+               _toggleMuteCallback();
+               break;
+            case OPCODE_TOGGLE_CAMERA:
+               _toggleCameraCallback();
+               break;
+            case OPCODE_DEBUG:
+               _debugCallback(new ASCIIEncoding().GetString(buffer, 1, sizeByte - 1));
+               break;
+            default:
+               _logger.Error("Invalid OPCODE {0}", opCode);
+               break;
          }
       }
    }
