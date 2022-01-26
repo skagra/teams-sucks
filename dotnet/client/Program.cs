@@ -1,4 +1,5 @@
 using NLog;
+
 namespace TeamsSucks
 {
    public class Program
@@ -41,20 +42,24 @@ namespace TeamsSucks
       }
 
       private static readonly string[] ARDUINO_NAMES = { "CH340" };
+      private const string BT_DEVICE_NAME="HC-05";
+      private const string BT_DEVICE_PASSWORD="1234";
+
+      private const bool USE_BLUETOOTH=true;
 
       static void Main(string[] Arguments)
       {
-         _logger.Info($"Searching for Arduino named {string.Join(", ", ARDUINO_NAMES)}");
-
-         bool useBluetooth = true;
-
+         _logger.Info("Teams Sucks");
+         
          IComms comms;
-         if (useBluetooth)
+         if (USE_BLUETOOTH)
          {
-            comms = new BluetoothComms("HC-05", "1234");
+            _logger.Info("Using Bluetooth");
+            comms = new BluetoothComms(BT_DEVICE_NAME, BT_DEVICE_PASSWORD);
          }
          else
          {
+            _logger.Info("Using USB");
             comms = new SerialComms(ARDUINO_NAMES, 9600);
          }
 
@@ -65,11 +70,12 @@ namespace TeamsSucks
              ProcessDebugMessage,
              comms.Read
          );
+
          _protocolWriter = new ProtocolWriter(comms.Write);
 
          _protocolReader.Start();
 
-         _logger.Info("Listening for protocol from Arduino");
+         _logger.Info("Read to talk");
 
          Console.ReadLine();
 
