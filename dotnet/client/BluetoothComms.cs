@@ -1,9 +1,11 @@
 using System.Net.Sockets;
+using NLog;
 
 namespace TeamsSucks
 {
    public class BluetoothComms : IComms
    {
+      private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
       private readonly NetworkStream _btStream;
       private readonly BluetoothManager _btManager;
 
@@ -23,9 +25,9 @@ namespace TeamsSucks
                // Blocks forever by default
                result = _btStream.Read(buffer, offset, count);
             }
-            catch (IOException)
+            catch (IOException e)
             {
-               // Ignore
+               _logger.Warn(e.Message);
             }
          }
 

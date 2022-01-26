@@ -1,6 +1,5 @@
 namespace TeamsSucks
 {
-
    public interface IComms
    {
       int Read(byte[] buffer, int offset, int count);

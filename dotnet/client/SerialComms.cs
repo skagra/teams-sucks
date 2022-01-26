@@ -35,9 +35,10 @@ namespace TeamsSucks
          }
          else
          {
-            throw new Exception("Can't find Arduino");
+            throw new Exception($"Can't find Arduino named {string.Join(", ", arduinoNames)}");
          }
       }
+
       public int Read(byte[] buffer, int offset, int count)
       {
          int result = 0;
