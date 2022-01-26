@@ -1,4 +1,10 @@
+#define _USE_BT_
+
 #include <LiquidCrystal.h>
+
+#ifdef _USE_BT_
+#include <SoftwareSerial.h>
+#endif 
 
 // Pins
 
@@ -17,6 +23,16 @@ const uint8_t PIN_LCD_DATA_7 = 7;
 
 // Tone
 const uint8_t PIN_TONE = 11;
+
+#ifdef _USE_BT_
+const uint8_t PIN_BT_RX=12;
+const uint8_t PIN_BT_TX=13;
+SoftwareSerial blueTooth=SoftwareSerial(PIN_BT_RX, PIN_BT_TX);
+#define SERIAL_INF blueTooth
+#else
+#define SERIAL_INF Serial
+#endif
+
 
 // Misc
 const unsigned long DEBOUNCE_DELAY = 100;
@@ -162,17 +178,17 @@ const byte OPCODE_DEBUG = 0xFF;
 
 void sendDebug(char *message)
 {
-   Serial.write(1 + strlen(message));
-   Serial.write(OPCODE_DEBUG);
-   Serial.print(message);
-   Serial.flush();
+   SERIAL_INF.write(1 + strlen(message));
+   SERIAL_INF.write(OPCODE_DEBUG);
+   SERIAL_INF.print(message);
+   SERIAL_INF.flush();
 }
 
 void sendOpCode(byte opCode)
 {
-   Serial.write(1);
-   Serial.write(opCode);
-   Serial.flush();
+   SERIAL_INF.write(1);
+   SERIAL_INF.write(opCode);
+   SERIAL_INF.flush();
 }
 
 void sendCycleWindows()
@@ -195,8 +211,8 @@ void handleError()
    playError();
 }
 
-const int SERIAL_READ_BUFFER_SIZE = 100;
-byte serialBuffer[SERIAL_READ_BUFFER_SIZE];
+const int SERIAL_INF_READ_BUFFER_SIZE = 100;
+byte serialBuffer[SERIAL_INF_READ_BUFFER_SIZE];
 int serialBufferIndex = 0;
 bool currentlyReading = false;
 byte totalBytesToRead = 0;
@@ -204,9 +220,9 @@ byte totalBytesToRead = 0;
 void readAndDispatchTick()
 {
    byte currentByte;
-   if (Serial.available())
+   if (SERIAL_INF.available())
    {
-      currentByte = Serial.read();
+      currentByte = SERIAL_INF.read();
       if (!currentlyReading)
       {
          serialBufferIndex = 0;
@@ -272,7 +288,7 @@ void playError()
 // Initialization -->
 
 // Serial port settings
-const long SERIAL_WAIT_DELAY = 1000;
+//const long SERIAL_WAIT_DELAY = 1000;
 const unsigned long SERIAL_BAUD_RATE = 9600;
 
 unsigned int bootFrequencies[] = {250, 500, 750, 1250, 1500};
@@ -283,12 +299,12 @@ void setup()
    // Initialise the LCD display
    setupLCD();
 
-   // Set up serial over USB
-   Serial.begin(SERIAL_BAUD_RATE);
-   while (!Serial)
-   {
-      delay(SERIAL_WAIT_DELAY);
-   }
+#ifdef _USE_BT_
+   pinMode(PIN_BT_RX, INPUT);
+   pinMode(PIN_BT_TX, OUTPUT);
+#endif
+
+   SERIAL_INF.begin(SERIAL_BAUD_RATE);
 
    // Set up pins
 
