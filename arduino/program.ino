@@ -177,7 +177,7 @@ const byte OPCODE_TOGGLE_CAMERA = 0x03;
 const byte OPCODE_ERROR = 0x04;
 const byte OPCODE_DEBUG = 0xFF;
 
-void sendDebug(char *message)
+void sendDebug(const char *message)
 {
    SERIAL_INF.write(1 + strlen(message));
    SERIAL_INF.write(OPCODE_DEBUG);
