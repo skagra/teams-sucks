@@ -23,6 +23,12 @@ const uint8_t PIN_LCD_DATA_7 = 7;
 // Tone
 const uint8_t PIN_TONE = 11;
 
+// Bluetooth
+#ifdef _USE_BT_
+const uint8_t PIN_BT_RX = 12;
+const uint8_t PIN_BT_TX = 13;
+#endif
+
 // <-- Pins
 
 // Sounds -->
@@ -80,6 +86,11 @@ void toggleCameraCallback(void *clientData) {
    player->play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
 }
 
+void errorCallback(void *clientData)
+{
+   player->play(errorFrequencies, errorDurations, sizeof(errorFrequencies) / sizeof(unsigned int));
+}
+
 void setup()
 {
    player=new Player(PIN_TONE);
@@ -88,13 +99,24 @@ void setup()
       PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE,
       PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
-   protocol=new Protocol();
+
+   protocol=new Protocol(errorCallback, (void*)0
+#ifdef _USE_BT_
+      , PIN_BT_RX, PIN_BT_TX
+#endif
+   );
 
    cycleWindowsButton=new Button(PIN_CYCLE_WINDOWS, CycleWindowsCallback, (void*)0);
    toggleMuteButton=new Button(PIN_TOGGLE_MUTE, toggleMuteCallback, (void*)0);
    toggleCameraButton=new Button(PIN_TOGGLE_CAMERA, toggleCameraCallback,  (void*)0);
 
    player->play(bootFrequencies, bootDurations, sizeof(bootFrequencies) / sizeof(unsigned int));
+
+#ifdef _USE_BT_
+   statusDisplay->setStatusMessage("Using Bluetooth");
+#else
+   statusDisplay->setStatusMessage("Using USB");
+#endif
 }
 
 void loop()
