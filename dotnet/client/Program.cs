@@ -45,7 +45,7 @@ namespace TeamsSucks
       private const string BT_DEVICE_NAME="HC-05";
       private const string BT_DEVICE_PASSWORD="1234";
 
-      private const bool USE_BLUETOOTH=true;
+      private const bool USE_BLUETOOTH=false;
 
       static void Main(string[] Arguments)
       {
@@ -75,7 +75,7 @@ namespace TeamsSucks
 
          _protocolReader.Start();
 
-         _logger.Info("Read to talk");
+         _logger.Info("Ready to talk");
 
          Console.ReadLine();
 

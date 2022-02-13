@@ -5,6 +5,6 @@
     "port": "COM6",
     "configuration": "cpu=atmega328old",
     "buildPreferences": [
-        ["build.extra_flags", "-D_USE_BT_"]
+        ["build.extra_flags", "-U_USE_BT_"]
     ]
 }

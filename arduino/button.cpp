@@ -10,20 +10,18 @@ Button::Button(byte buttonPin, void (*callback)(void*), void *clientData) {
 }
 
 void Button::tick() {
-    if (digitalRead(_buttonPin) == HIGH)
-    {
-        unsigned long now = millis();
-        if (now >= _lastPressedMillis + _DEBOUNCE_DELAY_MILLIS) {     
-            if (!_currentlyPressed)
-            {
-                _currentlyPressed = true;
-                _lastPressedMillis = now;
-                _callback(_clientData);
-            }
-            else
-            {
-                _currentlyPressed = false;
-            }
+    unsigned long now = millis();
+    if (now >= _lastPressedMillis + _DEBOUNCE_DELAY_MILLIS) {     
+        if (digitalRead(_buttonPin) == HIGH && !_currentlyPressed)
+        {
+            _currentlyPressed = true;
+            _lastPressedMillis = now;
+            _callback(_clientData);
         }
+        else 
+        if (digitalRead(_buttonPin) == LOW && _currentlyPressed)
+        {
+            _currentlyPressed = false;
+        }   
     }
 }

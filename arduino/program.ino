@@ -75,15 +75,15 @@ void CycleWindowsCallback(void *clientData) {
 }
 
 void toggleMuteCallback(void *clientData) {
-   protocol->sendCycleWindows();
-   statusDisplay->setStatusMessage("Cycle windows");
-   player->play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies) / sizeof(unsigned int));
+   protocol->sendToggleMute();
+   statusDisplay->setStatusMessage("Toggle mute");
+   player->play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
 }
 
 void toggleCameraCallback(void *clientData) {
    protocol->sendToggleCamera();
    statusDisplay->setStatusMessage("Toggle camera");
-   player->play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
+   player->play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies) / sizeof(unsigned int));
 }
 
 // Protocol callbacks

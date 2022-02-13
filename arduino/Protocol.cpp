@@ -9,12 +9,12 @@
 
 using namespace TeamsSucks;
 
-Protocol::Protocol(void (*_errorCallback)(void*), void *clientData
+Protocol::Protocol(void (*errorCallback)(void*), void *clientData
 #ifdef _USE_BT_
    , uint8_t pinBtRx, uint8_t pinBtTx
 #endif
 ) {
-   _errorCallback=_errorCallback;
+   _errorCallback=errorCallback;
    _clientData=clientData;
 
    SERIAL_INF->begin(_SERIAL_BAUD_RATE);
