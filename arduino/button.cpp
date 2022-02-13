@@ -1,4 +1,6 @@
-#include "button.h"
+#include "Button.h"
+
+using namespace TeamsSucks;
 
 Button::Button(byte buttonPin, void (*callback)(void*), void *clientData) {
     _buttonPin=buttonPin;
@@ -10,11 +12,12 @@ Button::Button(byte buttonPin, void (*callback)(void*), void *clientData) {
 void Button::tick() {
     if (digitalRead(_buttonPin) == HIGH)
     {
-        if (millis() >= _lastPressedMillis + _DEBOUNCE_DELAY_MILLIS) {     
+        unsigned long now = millis();
+        if (now >= _lastPressedMillis + _DEBOUNCE_DELAY_MILLIS) {     
             if (!_currentlyPressed)
             {
                 _currentlyPressed = true;
-                _lastPressedMillis = millis();
+                _lastPressedMillis = now;
                 _callback(_clientData);
             }
             else

@@ -1,11 +1,13 @@
-#include "tune.h"
+#include "Player.h"
 
-Tune::Tune(byte tonePin) {
+using namespace TeamsSucks;
+
+Player::Player(uint8_t tonePin) {
     _tonePin=tonePin;
      pinMode(_tonePin, OUTPUT);
 };
 
-void Tune::play(unsigned int frequencies[], unsigned long durations[], size_t numNotes)
+void Player::play(unsigned int frequencies[], unsigned long durations[], size_t numNotes)
 {
    _noteIndex = 0;
    _activeFrequencies = frequencies;
@@ -16,7 +18,7 @@ void Tune::play(unsigned int frequencies[], unsigned long durations[], size_t nu
    tone(_tonePin, _activeFrequencies[0], _activeDurations[0]);
 }
 
-void Tune::tick()
+void Player::tick()
 {
    if (_noteIndex != -1)
    {
