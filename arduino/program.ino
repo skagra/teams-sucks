@@ -1,3 +1,6 @@
+#include "tune.h"
+#include "button.h"
+
 // Define to build for Bluetooth else serial over USB
 #define _USE_BT_
 
@@ -37,48 +40,8 @@ SoftwareSerial blueTooth = SoftwareSerial(PIN_BT_RX, PIN_BT_TX);
 // Misc
 const unsigned long DEBOUNCE_DELAY = 100;
 
-// Sound -->
-
-int currentNoteIndex = -1;
-int currentNumNotes = 0;
-unsigned long currentNoteStartMillis = 0;
-unsigned int *activeFrequencies;
-unsigned long *activeDurations;
-
-void play(unsigned int frequencies[], unsigned long durations[], size_t numNotes)
-{
-
-   currentNoteIndex = 0;
-   activeFrequencies = frequencies;
-   activeDurations = durations;
-   currentNumNotes = numNotes;
-   currentNoteStartMillis = millis();
-
-   tone(PIN_TONE, activeFrequencies[0], activeDurations[0]);
-}
-
-void playTick()
-{
-   if (currentNoteIndex != -1)
-   {
-      unsigned long now = millis();
-      if (now >= currentNoteStartMillis + activeDurations[currentNoteIndex])
-      {
-         currentNoteIndex++;
-         if (currentNoteIndex < currentNumNotes)
-         {
-            currentNoteStartMillis = now;
-            tone(PIN_TONE, activeFrequencies[currentNoteIndex], activeDurations[currentNoteIndex]);
-         }
-         else
-         {
-            currentNoteIndex = -1;
-         }
-      }
-   }
-}
-
-// <-- Sound
+// Tune
+Tune tune(PIN_TONE);
 
 // LCD Display -->
 LiquidCrystal lcd = LiquidCrystal(PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE, 
@@ -256,44 +219,67 @@ void readAndDispatchTick()
 
 // <-- Protocol
 
+// Sounds -->
+
 unsigned int cycleWindowsFrequencies[] = {250, 750, 1250, 750, 250};
 unsigned long cycleWindowsDurations[] = {100, 100, 100, 100, 100};
 void playCycleWindows()
 {
-   play(cycleWindowsFrequencies, cycleWindowsDurations, sizeof(cycleWindowsFrequencies) / sizeof(unsigned int));
+   tune.play(cycleWindowsFrequencies, cycleWindowsDurations, sizeof(cycleWindowsFrequencies) / sizeof(unsigned int));
 }
 
 unsigned int toggleMuteFrequencies[] = {250, 750, 1250};
 unsigned long toggleMuteDurations[] = {100, 100, 100};
 void playButtonToggleMute()
 {
-   play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
+   tune.play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
 }
 
 unsigned int toggleCameraFrequencies[] = {1250, 750, 250};
 unsigned long toggleCameraDurations[] = {100, 100, 100};
 void playButtonToggleCamera()
 {
-   play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies) / sizeof(unsigned int));
+   tune.play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies) / sizeof(unsigned int));
 }
 
 unsigned int errorFrequencies[] = {250, 100};
 unsigned long errorDurations[] = {500, 500};
 void playError()
 {
-   play(errorFrequencies, errorDurations, sizeof(errorFrequencies) / sizeof(unsigned int));
+   tune.play(errorFrequencies, errorDurations, sizeof(errorFrequencies) / sizeof(unsigned int));
 }
 
-// <-- Sound
+// <-- Sounds
 
 // Initialization -->
 
 // Serial port settings
-//const long SERIAL_WAIT_DELAY = 1000;
 const unsigned long SERIAL_BAUD_RATE = 9600;
 
 unsigned int bootFrequencies[] = {250, 500, 750, 1250, 1500};
 unsigned long bootDurations[] = {100, 100, 100, 100, 100};
+
+void CycleWindowsCallback(void *clientData) {
+   sendCycleWindows();
+   statusMessage("Cycle windows");
+   playCycleWindows();
+}
+
+void toggleMuteCallback(void *clientData) {
+   sendCycleWindows();
+   statusMessage("Cycle windows");
+   playCycleWindows();
+}
+
+void toggleCameraCallback(void *clientData) {
+   sendToggleCamera();
+   statusMessage("Toggle camera");
+   playButtonToggleCamera();
+}
+
+Button cycleWindowsButton(PIN_CYCLE_WINDOWS, CycleWindowsCallback, (void*)0);
+Button toggleMuteButton(PIN_TOGGLE_MUTE, toggleMuteCallback, (void*)0);
+Button toggleCameraButton(PIN_TOGGLE_CAMERA, toggleCameraCallback,  (void*)0);
 
 void setup()
 {
@@ -307,83 +293,25 @@ void setup()
 
    SERIAL_INF.begin(SERIAL_BAUD_RATE);
 
-   // Set up pins
-
-   // Bring to front
-   pinMode(PIN_CYCLE_WINDOWS, INPUT);
-   pinMode(PIN_TOGGLE_MUTE, INPUT);
-   pinMode(PIN_TOGGLE_CAMERA, INPUT);
-
 #ifdef _USE_BT_
    statusMessage("Bluetooth comms");
 #else
    statusMessage("Serial comms");
 #endif
 
-   play(bootFrequencies, bootDurations, sizeof(bootFrequencies) / sizeof(unsigned int));
+   tune.play(bootFrequencies, bootDurations, sizeof(bootFrequencies) / sizeof(unsigned int));
 }
 
 // <-- Initialization
 
-bool cycleWindowsPressed = false;
-bool toggleMutePressed = false;
-bool toggleMuteCameraPressed = false;
-
-unsigned long lastKeyPressedMillis = 0;
-
 void loop()
 {
    lcdTick();
-   playTick();
+   tune.tick();
 
-   if (millis() >= lastKeyPressedMillis + DEBOUNCE_DELAY || lastKeyPressedMillis == 0)
-   {
-      if (digitalRead(PIN_CYCLE_WINDOWS) == HIGH)
-      {
-         if (!cycleWindowsPressed)
-         {
-            sendCycleWindows();
-            statusMessage("Cycle windows");
-            cycleWindowsPressed = true;
-            playCycleWindows();
-         }
-      }
-      else
-      {
-         cycleWindowsPressed = false;
-      }
-
-      if (digitalRead(PIN_TOGGLE_MUTE) == HIGH)
-      {
-         if (!toggleMutePressed)
-         {
-            sendToggleMute();
-            statusMessage("Toggle mute");
-            toggleMutePressed = true;
-            playButtonToggleMute();
-         }
-      }
-      else
-      {
-         toggleMutePressed = false;
-      }
-
-      if (digitalRead(PIN_TOGGLE_CAMERA) == HIGH)
-      {
-         if (!toggleMuteCameraPressed)
-         {
-            sendToggleCamera();
-            statusMessage("Toggle camera");
-            toggleMuteCameraPressed = true;
-            playButtonToggleCamera();
-         }
-      }
-      else
-      {
-         toggleMuteCameraPressed = false;
-      }
-      lastKeyPressedMillis = millis();
-   }
+   cycleWindowsButton.tick();
+   toggleMuteButton.tick();
+   toggleCameraButton.tick();
 
    readAndDispatchTick();
 }
