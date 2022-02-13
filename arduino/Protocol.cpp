@@ -2,21 +2,16 @@
 
 #ifdef _USE_BT_
 #include <SoftwareSerial.h>
-#endif
-
-using namespace TeamsSucks;
-
-#ifdef _USE_BT_
 #define SERIAL_INF _blueTooth
 #else
 #define SERIAL_INF (&Serial)
 #endif
 
+using namespace TeamsSucks;
+
 Protocol::Protocol(void (*_errorCallback)(void*), void *clientData
 #ifdef _USE_BT_
-   ,
-   uint8_t pinBtRx,
-   uint8_t pinBtTx
+   , uint8_t pinBtRx, uint8_t pinBtTx
 #endif
 ) {
    _errorCallback=_errorCallback;

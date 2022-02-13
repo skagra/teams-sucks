@@ -86,6 +86,7 @@ void toggleCameraCallback(void *clientData) {
    player->play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
 }
 
+// Protocol callbacks
 void errorCallback(void *clientData)
 {
    player->play(errorFrequencies, errorDurations, sizeof(errorFrequencies) / sizeof(unsigned int));
@@ -98,7 +99,6 @@ void setup()
    statusDisplay=new StatusDisplay(helpMessages, sizeof(helpMessages) / sizeof(char*),
       PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE,
       PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
-
 
    protocol=new Protocol(errorCallback, (void*)0
 #ifdef _USE_BT_
