@@ -11,8 +11,8 @@ namespace TeamsSucks
 
       public BluetoothComms(string deviceName, string devicePassword)
       {
-         var _btManager = new BluetoothManager(deviceName, devicePassword);
-         _btStream = (NetworkStream)_btManager.Connect();
+         _btManager = new BluetoothManager(deviceName, devicePassword);
+         _btStream = _btManager.Connect() as NetworkStream ?? throw new NullReferenceException();
       }
 
       public int Read(byte[] buffer, int offset, int count)
