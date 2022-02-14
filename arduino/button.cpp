@@ -19,9 +19,11 @@ void Button::tick() {
             _callback(_clientData);
         }
         else 
-        if (digitalRead(_buttonPin) == LOW && _currentlyPressed)
         {
-            _currentlyPressed = false;
-        }   
+            if (digitalRead(_buttonPin) == LOW && _currentlyPressed)
+            {
+                _currentlyPressed = false;
+            }   
+        }
     }
 }
