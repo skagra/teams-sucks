@@ -1,5 +1,7 @@
 #include "Protocol.h"
 
+#define _USE_BT_ 1
+
 #ifdef _USE_BT_
 #include <SoftwareSerial.h>
 #define SERIAL_INF _blueTooth
@@ -9,21 +11,22 @@
 
 using namespace TeamsSucks;
 
-Protocol::Protocol(void (*errorCallback)(void*), void *clientData
+Protocol::Protocol(void (*errorCallback)(void *), void *clientData
 #ifdef _USE_BT_
-   , uint8_t pinBtRx, uint8_t pinBtTx
+                   ,
+                   uint8_t pinBtRx, uint8_t pinBtTx
 #endif
-) {
-   _errorCallback=errorCallback;
-   _clientData=clientData;
+)
+{
+   _errorCallback = errorCallback;
+   _clientData = clientData;
 
    SERIAL_INF->begin(_SERIAL_BAUD_RATE);
 
-#ifdef _USE_BT_ 
-   _blueTooth = new SoftwareSerial(pinBtRx, pinBtTx);
-
+#ifdef _USE_BT_
    pinMode(pinBtRx, INPUT);
    pinMode(pinBtTx, OUTPUT);
+   _blueTooth = new SoftwareSerial(pinBtRx, pinBtTx);
 #endif
 }
 

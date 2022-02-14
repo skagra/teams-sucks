@@ -61,9 +61,9 @@ namespace TeamsSucks
          _serialPort.Write(buffer, offset, count);
       }
 
-      private string FindAnduinoComPort(string[] arduinoNames)
+      private static string? FindAnduinoComPort(string[] arduinoNames)
       {
-         string result = null;
+         string? result = null;
 
          var regex = new Regex($"USB-SERIAL ({string.Join("|", arduinoNames)}) \\((.+)\\)");
 

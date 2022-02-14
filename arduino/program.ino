@@ -3,6 +3,8 @@
 #include "StatusDisplay.h"
 #include "Protocol.h"
 
+#define _USE_BT_ 1
+
 using namespace TeamsSucks;
 
 // Pins -->
@@ -51,7 +53,7 @@ unsigned long bootDurations[] = {100, 100, 100, 100, 100};
 // <-- Sounds
 
 // Help messages
-const char* helpMessages[] = {"Teams Sucks", "1 => Cycle Wins", "2 => Toggle Mute", "3 => Toggle Cam"};
+const char *helpMessages[] = {"Teams Sucks", "1 => Cycle Wins", "2 => Toggle Mute", "3 => Toggle Cam"};
 
 // Tune
 Player *player;
@@ -68,19 +70,22 @@ Button *toggleMuteButton;
 Button *toggleCameraButton;
 
 // Button press callbacks
-void CycleWindowsCallback(void *clientData) {
+void CycleWindowsCallback(void *clientData)
+{
    protocol->sendCycleWindows();
    statusDisplay->setStatusMessage("Cycle windows");
    player->play(cycleWindowsFrequencies, cycleWindowsDurations, sizeof(cycleWindowsFrequencies) / sizeof(unsigned int));
 }
 
-void toggleMuteCallback(void *clientData) {
+void toggleMuteCallback(void *clientData)
+{
    protocol->sendToggleMute();
    statusDisplay->setStatusMessage("Toggle mute");
    player->play(toggleMuteFrequencies, toggleMuteDurations, sizeof(toggleMuteFrequencies) / sizeof(unsigned int));
 }
 
-void toggleCameraCallback(void *clientData) {
+void toggleCameraCallback(void *clientData)
+{
    protocol->sendToggleCamera();
    statusDisplay->setStatusMessage("Toggle camera");
    player->play(toggleCameraFrequencies, toggleCameraDurations, sizeof(toggleCameraFrequencies) / sizeof(unsigned int));
@@ -94,21 +99,22 @@ void errorCallback(void *clientData)
 
 void setup()
 {
-   player=new Player(PIN_TONE);
+   player = new Player(PIN_TONE);
 
-   statusDisplay=new StatusDisplay(helpMessages, sizeof(helpMessages) / sizeof(char*),
-      PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE,
-      PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
+   statusDisplay = new StatusDisplay(helpMessages, sizeof(helpMessages) / sizeof(char *),
+                                     PIN_LCD_REGISTER_SELECT, PIN_LCD_ENABLE,
+                                     PIN_LCD_DATA_4, PIN_LCD_DATA_5, PIN_LCD_DATA_6, PIN_LCD_DATA_7);
 
-   protocol=new Protocol(errorCallback, (void*)0
+   protocol = new Protocol(errorCallback, (void *)0
 #ifdef _USE_BT_
-      , PIN_BT_RX, PIN_BT_TX
+                           ,
+                           PIN_BT_RX, PIN_BT_TX
 #endif
    );
 
-   cycleWindowsButton=new Button(PIN_CYCLE_WINDOWS, CycleWindowsCallback, (void*)0);
-   toggleMuteButton=new Button(PIN_TOGGLE_MUTE, toggleMuteCallback, (void*)0);
-   toggleCameraButton=new Button(PIN_TOGGLE_CAMERA, toggleCameraCallback,  (void*)0);
+   cycleWindowsButton = new Button(PIN_CYCLE_WINDOWS, CycleWindowsCallback, (void *)0);
+   toggleMuteButton = new Button(PIN_TOGGLE_MUTE, toggleMuteCallback, (void *)0);
+   toggleCameraButton = new Button(PIN_TOGGLE_CAMERA, toggleCameraCallback, (void *)0);
 
    player->play(bootFrequencies, bootDurations, sizeof(bootFrequencies) / sizeof(unsigned int));
 
