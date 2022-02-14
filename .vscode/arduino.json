@@ -1,13 +1,13 @@
 {
-   "sketch": "arduino\\program.ino",
-   "board": "arduino:avr:nano",
-   "output": "arduino\\build",
-   "port": "COM7",
-   "configuration": "cpu=atmega328old",
-   "buildPreferences": [
-      [
-         "build.extra_flags",
-         "-D_USE_BT_"
-      ]
-   ]
+    "sketch": "arduino\\program.ino",
+    "board": "arduino:avr:nano",
+    "output": "arduino\\build",
+    "port": "COM3",
+    "configuration": "cpu=atmega328old",
+    "buildPreferences": [
+        [
+            "build.extra_flags",
+            "-D_USE_BT_"
+        ]
+    ]
 }

@@ -3,8 +3,8 @@
 using namespace TeamsSucks;
 
 Player::Player(uint8_t tonePin) {
-    _tonePin=tonePin;
-     pinMode(_tonePin, OUTPUT);
+   _tonePin=tonePin;
+   pinMode(_tonePin, OUTPUT);
 };
 
 void Player::play(unsigned int frequencies[], unsigned long durations[], size_t numNotes)

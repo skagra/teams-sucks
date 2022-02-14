@@ -1,8 +1,6 @@
 #ifndef _OPCODES_DOT_H_
 #define _OPCODES_DOT_H_
 
-#define _USE_BT_ 1
-
 #include <Arduino.h>
 
 #ifdef _USE_BT_
@@ -38,9 +36,7 @@ namespace TeamsSucks
    public:
       Protocol(void (*_errorCallback)(void *), void *clientData
 #ifdef _USE_BT_
-               ,
-               uint8_t pinBtRx,
-               uint8_t pinBtTx
+      , uint8_t pinBtRx, uint8_t pinBtTx
 #endif
       );
       void sendDebug(const char *message);

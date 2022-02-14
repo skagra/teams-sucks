@@ -3,8 +3,6 @@
 #include "StatusDisplay.h"
 #include "Protocol.h"
 
-#define _USE_BT_ 1
-
 using namespace TeamsSucks;
 
 // Pins -->
@@ -107,8 +105,7 @@ void setup()
 
    protocol = new Protocol(errorCallback, (void *)0
 #ifdef _USE_BT_
-                           ,
-                           PIN_BT_RX, PIN_BT_TX
+      , PIN_BT_RX, PIN_BT_TX
 #endif
    );
 
