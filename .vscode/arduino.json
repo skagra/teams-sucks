@@ -1,13 +1,13 @@
 {
     "sketch": "arduino\\Program.ino",
-    "board": "arduino:avr:nano",
+    "board": "arduino:avr:uno",
     "output": "arduino\\build",
-    "port": "COM3",
-    "configuration": "cpu=atmega328old",
+    "port": "COM8",
     "buildPreferences": [
         [
             "build.extra_flags",
             "-D_USE_BT_"
         ]
-    ]
+    ],
+    "programmer": "arduino:arduinoasisp"
 }
