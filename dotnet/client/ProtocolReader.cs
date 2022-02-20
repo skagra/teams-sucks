@@ -58,6 +58,8 @@ namespace TeamsSucks
          _reader(byteBuffer, 0, 1);
          byte sizeByte = byteBuffer[0];
 
+         _logger.Debug("Incoming size byte '{0}'", sizeByte);
+
          // Read the rest of the packet
          byte[] buffer = new byte[sizeByte];
          var read = 0;

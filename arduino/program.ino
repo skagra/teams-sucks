@@ -8,7 +8,7 @@ using namespace TeamsSucks;
 // Pins -->
 
 // Switches
-const uint8_t PIN_CYCLE_WINDOWS = 8;
+const uint8_t PIN_CYCLE_WINDOWS = 11;
 const uint8_t PIN_TOGGLE_MUTE = 9;
 const uint8_t PIN_TOGGLE_CAMERA = 10;
 
@@ -21,7 +21,7 @@ const uint8_t PIN_LCD_DATA_6 = 6;
 const uint8_t PIN_LCD_DATA_7 = 7;
 
 // Tone
-const uint8_t PIN_TONE = 11;
+const uint8_t PIN_TONE = 8;
 
 // Bluetooth
 #ifdef _USE_BT_
