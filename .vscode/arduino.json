@@ -2,7 +2,7 @@
     "sketch": "arduino\\Program.ino",
     "board": "arduino:avr:uno",
     "output": "arduino\\build",
-    "port": "COM8",
+    "port": "COM5",
     "buildPreferences": [
         [
             "build.extra_flags",
